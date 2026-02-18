@@ -1,0 +1,27 @@
+{
+  "name": "http-api-assignment-ii",
+  "version": "1.0.0",
+  "description": "API assignment 2",
+  "homepage": "https://github.com/rikirii/http-api-assignment-ii#readme",
+  "bugs": {
+    "url": "https://github.com/rikirii/http-api-assignment-ii/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rikirii/http-api-assignment-ii.git"
+  },
+  "license": "UNLICENSED",
+  "author": "RY",
+  "type": "commonjs",
+  "main": "./src/server.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.0",
+    "globals": "^17.3.0"
+  }
+}

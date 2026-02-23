@@ -32,13 +32,22 @@
       //If we should parse a response (meaning we made a get request)
       
       if(parseResponse === 'get' || parseResponse === 'post') {
-        let obj = await response.json();
 
-        if(obj.message){
-        content.innerHTML += `<p>Message: ${obj.message}</p>`;
+        let obj = await response.json();
+        console.log(obj);
+
+        if (obj.pokemon){
+          if (obj.pokemon.length === 0 ){
+            content.innerHTML += `<p>Message: ${obj.message || 'No Pokmeon Found'}</p>`;
+          }
+          else{
+            content.innerHTML += `<p>${JSON.stringify(obj.pokemon) }</p>`;
+          }
         }
         else{
-          content.innerHTML += `<p>${JSON.stringify(obj.users) }</p>`;
+          if(obj.message){
+            content.innerHTML += `<p>Message: ${obj.message}</p>`;
+          }
         }
       } 
       
@@ -46,11 +55,34 @@
 
     };
 
-    const requestUpdate = async () =>{
-      const userForm = document.querySelector('#userForm');
+    const requestUpdate = async (e, ) =>{
+      e.preventDefault();
 
-      const url = userForm.querySelector('#urlField').value;
-      const method = userForm.querySelector('#methodSelect').value;
+      // most likely everything is a form. as such, default form
+      const form = e.target;
+
+      const baseUrl = form.getAttribute('action');
+      const method = form.querySelector('#methodSelect').value;
+
+      let url = baseUrl;
+
+      // checks all inputs from the form
+      const inputs = form.querySelectorAll('input');
+
+      let queryParams = [];
+
+      // loop through each inputs. If inputs has name and value (text input)
+      // add to query params
+      inputs.forEach(input => {
+        if (input.name && input.value) {
+          queryParams.push( `${input.name}=${input.value}`);
+        }
+      });
+
+      // if there are query params at all, add as many as there are
+      if (queryParams.length > 0){
+        url += `?${queryParams.join('&')}`;
+      }
 
       let response = await fetch(url, {
         method,
@@ -62,19 +94,45 @@
       handleResponse(response, method);
     };
 
-    const sendPost = async () =>{
-      const nameForm = document.querySelector('#nameForm');
+    const recordPokemonStatus = ()=>{
+      const recordPokeForm = document.querySelector('#recordPokemonForm');
 
-      const url = nameForm.getAttribute('action');
-      const method = nameForm.getAttribute('method');
+      const url = recordPokeForm.getAttribute('action');
+      const method = recordPokeForm.getAttribute('method');
 
-      const name = nameForm.querySelector('#nameField').value;
-      const age = nameForm.querySelector('#ageField').value;
+      const name = recordPokeForm.querySelector('#nameField').value;
+      const id = recordPokeForm.querySelector('#idField').value;
+      const isMarkFoundCB = recordPokeForm.querySelector('#isFoundCheckbox')
+      const note = recordPokeForm.querySelector('#notes').value;
       
-      // in FORM-URLENCODED format
-      //let formData = `name=${name}&age=${age}`;
+      const isMarkFound = isMarkFoundCB.checked? true : false;
 
-      let formData = JSON.stringify({name,age});
+      // in FORM-URLENCODED format
+      // let formData = `id=${id}&name=${name}&isMarkFound=${isMarkFound}&notes=${note}`;
+
+      // if (dataType){
+      //   formData = JSON.stringify({id,name,isMarkFound, note});
+      // }
+      
+      let formData = JSON.stringify({id,name,isMarkFound, note});
+
+      return formData
+    };
+
+    const addPoke = async() =>{
+      const addPokemonForm = document.querySelector("#addPokemonForm");
+
+      const newName = addPokemonForm.querySelector("#nameField").value;
+      const url = addPokemonForm.getAttribute('action');
+      const method = addPokemonForm.getAttribute('method');
+      // in FORM-URLENCODED format
+      // let formData = `id=${id}&name=${name}&isMarkFound=${isMarkFound}&notes=${note}`;
+
+      // if (dataType){
+      //   formData = JSON.stringify({id,name,isMarkFound, note});
+      // }
+      
+      let formData = JSON.stringify({newName});
 
       const response = await fetch(url, {
         method: method,
@@ -86,26 +144,76 @@
         body:formData,
       });
 
-      handleResponse(response, method)
+      handleResponse(response, method);
     };
+
+    const sendPost = async () =>{
+      const recordPokeForm = document.querySelector('#recordPokemonForm');
+
+      const url = recordPokeForm.getAttribute('action');
+      const method = recordPokeForm.getAttribute('method');
+
+      const name = recordPokeForm.querySelector('#nameField').value;
+      const id = recordPokeForm.querySelector('#idField').value;
+      const isMarkFoundCB = recordPokeForm.querySelector('#isFoundCheckbox')
+      const note = recordPokeForm.querySelector('#notes').value;
+      
+      const isMarkFound = isMarkFoundCB.checked? true : false;
+
+      // in FORM-URLENCODED format
+      // let formData = `id=${id}&name=${name}&isMarkFound=${isMarkFound}&notes=${note}`;
+
+      // if (dataType){
+      //   formData = JSON.stringify({id,name,isMarkFound, note});
+      // }
+      
+      let formData = JSON.stringify({id,name,isMarkFound, note});
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': formData.length,
+          'Accept': 'application/json',
+        },
+        body:formData,
+      });
+
+      handleResponse(response, method);
+    };
+
+    
 
 
     const init = () =>{
       
-      const getUsers = (e) =>{
-        e.preventDefault();
-        requestUpdate();
-        return false;
+      // const getUsers = (e) =>{
+      //   e.preventDefault();
+      //   requestUpdate();
+      //   return false;
 
-      }
-      const addUser = (e) =>{
+      // }
+      const sendUsers = (e) =>{
         e.preventDefault();
         sendPost();
         return false;
       }
 
-      document.querySelector('#userForm').addEventListener('submit',getUsers);
-      document.querySelector('#nameForm').addEventListener('submit',addUser);
+      const temp = (e) =>{
+        e.preventDefault();
+        addPoke();
+        return false;
+      }
+
+      // document.querySelector('#userForm').addEventListener('submit',getUsers);
+      // document.querySelector('#nameForm').addEventListener('submit',sendUsers);
+
+      document.querySelector('#pokeTypeForm').addEventListener('submit', requestUpdate);
+      document.querySelector('#allPokemonForm').addEventListener('submit', requestUpdate);
+      document.querySelector('#getNameForm').addEventListener('submit', requestUpdate);
+      document.querySelector('#getByHW').addEventListener('submit', requestUpdate);
+      document.querySelector('#recordPokemonForm').addEventListener('submit', sendUsers);
+      document.querySelector('#addPokemonForm').addEventListener('submit', temp);
     };
 
     window.onload = init;
@@ -115,24 +223,74 @@
 <body>
   <section id="top">
     <h3>POST Status Code Tests</h3>
-    <form id="nameForm" action="/addUser" method="post">
-      <label for="name">Name: </label>
-      <input id="nameField" type="text" name="name" />
-      <label for="age">Age: </label>
-      <input id="ageField" type="number" name="age" min="0" max="100" step="1"/>
-      <input type="submit" value="Add User" />
-    </form>
-    <form id="userForm" action="/getUsers" method="get">
-      <select id='urlField'>
-        <option value='/getUsers'>/getUsers</option>
-        <option value='/notReal'>/notReal</option>
-      </select>
+
+
+    <form id="pokeTypeForm" action="/getByType" method="get">
+      <label for="type">Type: </label>
+      <input id="typeField" type="text" name="type" />
       <select id="methodSelect">
         <option value="get">GET</option>
         <option value="head">HEAD</option>
       </select>
-      <input type="submit" value="Get User" />
+      <input type="submit" value="Filter By Type" />
     </form>
+
+    <form id="allPokemonForm" action="/getAllPokemon" method="get">
+      <select id="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
+      <input type="submit" value="Show All Pokemon" />
+    </form>
+
+    <form id="getNameForm" action="/getByName" method="get">
+      <label for="name">Name: </label>
+      <input id="nameField" type="text" name="name" />
+      <select id="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
+      <input type="submit" value="Search Name" />
+    </form>
+
+    <form id="getByHW" action="/getByHeightWeight" method="get">
+      <label for="minHeight">MinHeight: </label>
+      <input id="minHeightField" type="text" name="minHeight" />
+      <label for="maxHeight">MaxHeight: </label>
+      <input id="maxHeightField" type="text" name="maxHeight" />
+
+      <label for="minWeight">MinWeight: </label>
+      <input id="minWeightField" type="text" name="minWeight" />
+      <label for="maxWeight">MaxWeight: </label>
+      <input id="maxWeightField" type="text" name="maxWeight" />
+
+      <select id="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
+      <input type="submit" value="Search Pokemon" />
+    </form>
+
+    <form id="recordPokemonForm" action="/recordFoundPokemon" method="post">
+      <label for="name">Name: </label>
+      <input id="nameField" type="text" name="name" />
+      <label for="id">ID: </label>
+      <input id="idField" type="number" name="id" step="1"/>
+      <label for="markFound">Mark as Found: </label>
+      <input type="checkbox" id="isFoundCheckbox" value="true">
+      <label for="notes">Notes: </label>
+      <textarea id="notes" name="notes" rows="5" cols="33" ></textarea>
+      <input type="submit" value="Record" />
+    </form>
+
+    <form id="addPokemonForm" action="/addPokemon" method="post">
+      <label for="name">Name: </label>
+      <input id="nameField" type="text" name="name" />
+      
+      <input type="submit" value="Add Pokemon" />
+    </form>
+
+    
   </section>
   <section id="content">
   </section>

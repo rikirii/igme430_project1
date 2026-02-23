@@ -1,4 +1,5 @@
 const http = require('http');
+const query = require('querystring');
 
 const htmlHandler = require('./htmlHandler.js');
 const jsonHandler = require('./jsonHandler.js');
@@ -24,7 +25,11 @@ const parseBody = (request, response, handler) => {
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
     const type = request.headers['content-type'];
-    if (type === 'application/json') {
+
+    if(type === 'application/x-www-form-urlencoded') {
+      request.body = query.parse(bodyString);
+    }
+    else if (type === 'application/json') {
       request.body = JSON.parse(bodyString);
     } else {
       response.writeHead(400, { 'Content-Type': 'application/json' });
@@ -37,49 +42,68 @@ const parseBody = (request, response, handler) => {
   });
 };
 
-const handlePost = (request, response, parsedUrl) =>{
-    if (parsedUrl.pathname ==='/addUser'){
-        parseBody(request, response, jsonHandler.addUser);
-    }
+const handlePost = (request, response, parsedUrl) => {
+  if (parsedUrl.pathname === '/recordFoundPokemon') {
+    parseBody(request, response, jsonHandler.recordFoundPokemon);
+  }
+  else if(parsedUrl.pathname === '/addPokemon'){
+    parseBody(request, response, jsonHandler.addPokemon)
+  }
 };
 
 
-const handleGet = (request, response, parsedUrl) =>{
-    const pathName = parsedUrl.pathname;
+const handleGet = (request, response, parsedUrl) => {
+  const pathName = parsedUrl.pathname;
 
-    switch(pathName){
-        case '/':
-            htmlHandler.getIndex(request,response);
-            break;
-        case '/style.css':
-            htmlHandler.getCSS(request,response);
-            break;
+  switch (pathName) {
+    case '/':
+      htmlHandler.getIndex(request, response);
+      break;
 
-        case '/getUsers':
-            jsonHandler.getUsers(request, response);
-            break;
-        default:
-            jsonHandler.notFound(request, response);
-            break;
+    case '/style.css':
+      htmlHandler.getCSS(request, response);
+      break;
 
-    }
+    case '/getAllPokemon':
+      jsonHandler.getAllPokemon(request, response);
+      break;
+
+    case '/getByType':
+      jsonHandler.getByType(request, response);
+      break;
+
+    case '/getByName':
+      jsonHandler.getByName(request, response);
+      break;
+    
+    case '/getByHeightWeight':
+      jsonHandler.getByHeightWeight(request, response);
+      break;
+
+    default:
+      jsonHandler.notFound(request, response);
+      break;
+
+  }
 }
 
 
 
-const onRequest = (request, response) =>{
-    const protocol = request.connection.encrypted ? 'https' : 'http';
-    const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+const onRequest = (request, response) => {
+  const protocol = request.connection.encrypted ? 'https' : 'http';
+  const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
 
-    // check if method was POST, otherwise assume GET
-    // for the sake of this example
-    if (request.method === 'POST') {
-        handlePost(request, response, parsedUrl);
-    } else {
-        handleGet(request, response, parsedUrl);
-    }
+  request.query = Object.fromEntries(parsedUrl.searchParams);
+  // check if method was POST, otherwise assume GET
+  // for the sake of this example
+  if (request.method === 'POST') {
+    handlePost(request, response, parsedUrl);
+  } else {
+    handleGet(request, response, parsedUrl);
+  }
+  
 
-    
+
 };
 
 

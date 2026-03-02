@@ -63,6 +63,15 @@
     const OrganizeContent = (object) => {
       let bigString = "";
       let pokeList = object.pokemon;
+      
+      if (pokeList.length == null){
+        let pokemon = pokeList;
+        let pokeImg = `<img src='${pokemon.img}' title= '${pokemon.name}'/> `
+        let line = `<div class='result'>${pokeImg}<div class='pokeNum'>#${pokemon.num}</div>
+        <div class='pokeName'>${pokemon.name}</div><div class='pokeType'>${pokemon.type}</div></div>`;
+        bigString += line;
+      }
+      
       for (let i = 0; i < pokeList.length; i++) {
         let pokemon = pokeList[i];
         let pokeImg = `<img src='${pokemon.img}' title= '${pokemon.name}'/> `

@@ -9,6 +9,7 @@ const pokeData = JSON.parse(
 
 const respondJSON = (request, response, status, object) => {
     const content = JSON.stringify(object);
+    //const organizedContent = OrganizeContent(object);
 
     const headers = {
         'Content-Type': 'application/json',
@@ -24,7 +25,6 @@ const respondJSON = (request, response, status, object) => {
     response.end();
 
 };
-
 
 const getAllPokemon = (request, response) => {
     const responseJSON = {

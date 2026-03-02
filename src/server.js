@@ -63,6 +63,14 @@ const handleGet = (request, response, parsedUrl) => {
     case '/style.css':
       htmlHandler.getCSS(request, response);
       break;
+    
+    case '/getDoc':
+      htmlHandler.getDoc(request, response);
+      break;
+    
+    case '/docStyle.css':
+      htmlHandler.getDocCSS(request, response);
+      break;
 
     case '/getAllPokemon':
       jsonHandler.getAllPokemon(request, response);

@@ -85,15 +85,16 @@
     const PokeDataHelper = (pokemon) => {
       let pokeImg = `<img src='${pokemon.img}' title= '${pokemon.name}'/> `
       let line = `<div class='result'>${pokeImg}<div class='pokeNum'>#${pokemon.num}</div>
-        <div class='pokeName'>${pokemon.name}</div><div class='pokeType'>${pokemon.type}</div>`;
-      
+        <div class='pokeName'>${pokemon.name}</div><div class='pokeType'>${pokemon.type}</div>
+        <div class='weightHeight'>Weight: ${pokemon.weight}  Height: ${pokemon.height}</div>`;
+
       let markFound = pokemon.mark_found;
-      if (markFound != null){
+      if (markFound != null) {
         line += `<div class='additionalNotes'>Found: ${markFound}`;
       }
 
       let notes = pokemon.note;
-      if (markFound != null){
+      if (markFound != null) {
         line += `<br>Notes: ${notes} </div>`;
       }
 
@@ -122,21 +123,23 @@
       // checks all inputs from the form
       // returns node list
       const inputs = form.querySelectorAll('input');
+      if (inputs.length > 0) {
+        let queryParams = [];
 
-      let queryParams = [];
+        // loop through each inputs. If inputs has name and value (text input)
+        // add to query params
+        inputs.forEach(input => {
+          if (input.name && input.value) {
+            queryParams.push(`${input.name}=${input.value}`);
+          }
+        });
 
-      // loop through each inputs. If inputs has name and value (text input)
-      // add to query params
-      inputs.forEach(input => {
-        if (input.name && input.value) {
-          queryParams.push(`${input.name}=${input.value}`);
+        // if there are query params at all, add as many as there are
+        if (queryParams.length > 0) {
+          url += `?${queryParams.join('&')}`;
         }
-      });
-
-      // if there are query params at all, add as many as there are
-      if (queryParams.length > 0) {
-        url += `?${queryParams.join('&')}`;
       }
+
 
       let response = await fetch(url, {
         method,
@@ -176,7 +179,7 @@
     const addPoke = async () => {
       const addPokemonForm = document.querySelector("#addPokemonForm");
 
-      const newName = addPokemonForm.querySelector("#nameField").value;
+      const newName = addPokemonForm.querySelector(".nameField").value;
       const url = addPokemonForm.getAttribute('action');
       const method = addPokemonForm.getAttribute('method');
       // in FORM-URLENCODED format
@@ -237,7 +240,9 @@
     };
 
 
+    const GoToDoc = () => {
 
+    }
 
     const init = () => {
 
@@ -279,6 +284,10 @@
   <div class="layout">
     <section id="top">
       <h3>PokeDex</h3>
+      <form id="toDoc" action="/getDoc" method="get">
+        <button type="submit" >Go to Documention</button>
+      </form>
+
 
       <div class="form-tab">
         <h3>Search By Type</h3>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>API server Documention</title>
+    <link rel="stylesheet" type="text/css" href="/docStyle.css">
+
+    <script>
+        const requestUpdate = async (e,) => {
+            e.preventDefault();
+
+            // most likely everything is a form. as such, default form
+            const form = e.target;
+
+            const baseUrl = form.getAttribute('action');
+            const method = form.querySelector('.methodSelect').value;
+
+            let url = baseUrl;
+
+            let response = await fetch(url, {
+                method,
+                headers: {
+                    'Accept': 'application/json'
+                },
+            });
+
+            handleResponse(response, method);
+        };
+
+        const init = () => {
+            document.querySelector('#toAPI').addEventListener('submit', requestUpdate)
+        }
+
+        window.onload = init;
+    </script>
+</head>
+
+<body>
+
+
+    <div class="topnav">
+        <form action="/" method="get">
+            <button type="submit" id="toAPI">Go to API</button>
+        </form>
+
+    </div>
+
+    <div id="docContainer">
+        <h2>API Documention</h2>
+        <section>
+            <h3>GET /getAllPokemon</h3>
+            <p>
+                Returns a list of all the pokemons in pokemon: objects[]
+            </p>
+            <p>
+                Example: https://igme430-project1-ry-c3ec09a78da8.herokuapp.com/getAllPokemon
+            </p>
+        </section>
+
+        <section>
+            <h3>GET /getByType</h3>
+            <p>
+                Returns a list of all the pokemons with the filter of pokemon type
+            </p>
+            <p>
+            <h4>Query Params:</h4>
+            <table>
+                <tr>
+                    <th>Param Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Type (optional)</td>
+                    <td>string?</td>
+                    <td>The pokemons' type</td>
+                </tr>
+            </table>
+            </p>
+            <p>
+                Example: https://igme430-project1-ry-c3ec09a78da8.herokuapp.com/getAllPokemon
+            </p>
+            <p>
+            <h4>Return</h4>
+            <pre>
+                <code>
+    {
+        "id": 1,
+        "num": "001",
+        "name": "Bulbasaur",
+        "img": "http://www.serebii.net/pokemongo/pokemon/001.png",
+        "type": [
+        "Grass",
+        "Poison"
+        ],
+        "height": "0.71 m",
+        "weight": "6.9 kg",
+        "weaknesses": [
+        "Fire",
+        "Ice",
+        "Flying",
+        "Psychic"
+        ],
+        "next_evolution": [
+        {
+            "num": "002",
+            "name": "Ivysaur"
+        },
+        {
+            "num": "003",
+            "name": "Venusaur"
+        }
+        ]
+    }
+
+                </code>
+            </pre>
+
+            </p>
+        </section>
+
+        <section>
+            <h3>GET /getByName</h3>
+            <p>
+                Fetch a pokemon via name
+            </p>
+            <p>
+            <h4>Query Params:</h4>
+            <table>
+                <tr>
+                    <th>Param Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Name (required)</td>
+                    <td>string?</td>
+                    <td>The pokemon via name search. Can return partial match</td>
+                </tr>
+            </table>
+            </p>
+            <p>
+                Example: https://igme430-project1-ry-c3ec09a78da8.herokuapp.com/getByName?name=bulbasaur
+            </p>
+            <p>
+            <h4>Return</h4>
+            <pre>
+                <code>
+    {
+        "id": 1,
+        "num": "001",
+        "name": "Bulbasaur",
+        "img": "http://www.serebii.net/pokemongo/pokemon/001.png",
+        "type": [
+        "Grass",
+        "Poison"
+        ],
+        "height": "0.71 m",
+        "weight": "6.9 kg",
+        "weaknesses": [
+        "Fire",
+        "Ice",
+        "Flying",
+        "Psychic"
+        ],
+        "next_evolution": [
+        {
+            "num": "002",
+            "name": "Ivysaur"
+        },
+        {
+            "num": "003",
+            "name": "Venusaur"
+        }
+        ]
+    }
+
+                </code>
+            </pre>
+
+            </p>
+        </section>
+
+        <section>
+            <h3>GET /getByHeightWeight</h3>
+            <p>
+                Fetch a pokemon via height and weight restrictions
+            </p>
+            <p>
+            <h4>Query Params:</h4>
+            <table>
+                <tr>
+                    <th>Param Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>MinHeight (optional)</td>
+                    <td>float?</td>
+                    <td>Find pokemon with height greater or equal to the number inputted</td>
+                </tr>
+                <tr>
+                    <td>MaxHeight (optional)</td>
+                    <td>float?</td>
+                    <td>Find pokemon with height less or equal to the number inputted</td>
+                </tr>
+                <tr>
+                    <td>MinWeight (optional)</td>
+                    <td>float?</td>
+                    <td>Find pokemon with weight greater or equal to the number inputted</td>
+                </tr>
+                <tr>
+                    <td>maxWeight (optional)</td>
+                    <td>float?</td>
+                    <td>Find pokemon with weight less or equal to the number inputted</td>
+                </tr>
+            </table>
+            </p>
+            <p>
+                Example: https://igme430-project1-ry-c3ec09a78da8.herokuapp.com/getByHeightWeight?minHeight=0.7&maxWeight=1
+            </p>
+            <p>
+            <h4>Return</h4>
+            <pre>
+                <code>
+    {
+        "id": 92,
+        "num": "092",
+        "name": "Gastly",
+        "img": "http://www.serebii.net/pokemongo/pokemon/092.png",
+        "type": [
+            "Ghost",
+            "Poison"
+        ],
+        "height": "1.30 m",
+        "weight": "0.1 kg",
+        "weaknesses": [
+            "Ground",
+            "Psychic",
+            "Ghost",
+            "Dark"
+        ],
+        "next_evolution": [
+            {
+                "num": "093",
+                "name": "Haunter"
+            },
+            {
+                "num": "094",
+                "name": "Gengar"
+            }
+        ]
+    },
+    {
+        "id": 93,
+        "num": "093",
+        "name": "Haunter",
+        "img": "http://www.serebii.net/pokemongo/pokemon/093.png",
+        "type": [
+            "Ghost",
+            "Poison"
+        ],
+        "height": "1.60 m",
+        "weight": "0.1 kg",
+        "weaknesses": [
+            "Ground",
+            "Psychic",
+            "Ghost",
+            "Dark"
+        ],
+        "next_evolution": [
+            {
+                "num": "094",
+                "name": "Gengar"
+            }
+        ]
+    }
+                </code>
+            </pre>
+
+            </p>
+        </section>
+
+        <section>
+            <h3>POST /recordFoundPokemon</h3>
+            <p>
+                Fethc and record a pokemon as "found" and any additional notes by the user
+            </p>
+            <p>
+            <h4>Body Params:</h4>
+            <table>
+                <tr>
+                    <th>Param Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Name (required/optional if ID is used)</td>
+                    <td>string?</td>
+                    <td>The pokemon via name search. Exact match required</td>
+                </tr>
+                <tr>
+                    <td>ID (required/optional if Name is used)</td>
+                    <td>int?</td>
+                    <td>The pokemon via ID search</td>
+                </tr>
+                <tr>
+                    <td>Mark as Found (optional)</td>
+                    <td>bool?</td>
+                    <td>Mark the pokemon as found or not found</td>
+                </tr>
+                <tr>
+                    <td>notes (optional)</td>
+                    <td>string?</td>
+                    <td>User's notes on this pokemon</td>
+                </tr>
+            </table>
+            </p>
+            <p>
+                Example: https://igme430-project1-ry-c3ec09a78da8.herokuapp.com/recordFoundPokemon
+            </p>
+            <p>
+            <h4>Return</h4>
+            <pre>
+                <code>   
+    {
+        "id": 13,
+        "num": "013",
+        "name": "Weedle",
+        "img": "http://www.serebii.net/pokemongo/pokemon/013.png",
+        "type": [
+            "Bug",
+            "Poison"
+        ],
+        "height": "0.30 m",
+        "weight": "3.2 kg",
+        "weaknesses": [
+            "Fire",
+            "Flying",
+            "Psychic",
+            "Rock"
+        ],
+        "next_evolution": [
+            {
+                "num": "014",
+                "name": "Kakuna"
+            },
+            {
+                "num": "015",
+                "name": "Beedrill"
+            }
+        ],
+        "mark_found": true,
+        "note": "hi"
+    }
+                </code>
+            </pre>
+
+            </p>
+        </section>
+
+        <section>
+            <h3>POST /addPokemon</h3>
+            <p>
+                Add a pokemon with name inputted by user
+            </p>
+            <p>
+            <h4>Body Params:</h4>
+            <table>
+                <tr>
+                    <th>Param Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Name (required)</td>
+                    <td>string?</td>
+                    <td>Create a pokemon object with the inputted name</td>
+                </tr>
+                
+            </table>
+            </p>
+            <p>
+                Example: https://igme430-project1-ry-c3ec09a78da8.herokuapp.com/addPokemon
+            </p>
+            <p>
+            <h4>Return</h4>
+            <pre>
+                <code>   
+    {
+        "newName": "apple"
+    }
+                </code>
+            </pre>
+
+            </p>
+        </section>
+    </div>
+
+</body>
+
+</html>

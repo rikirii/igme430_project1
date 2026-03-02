@@ -140,26 +140,27 @@ const getByHeightWeight = (request, response) => {
         const heightValue = parseFloat(pokemon.height);
         const weightValue = parseFloat(pokemon.weight);
 
-        // default true
-        let heightMatch = true;
-        let weightMatch = true;
-
         // checks height
-        if (minH !== null) {
-            heightMatch = heightValue >= minH;
-        }
-        if (maxH !== null) {
-            heightMatch = heightValue <= maxH;
-        }
+        let heightMatch = (minH === null || heightValue >= minH) && (maxH === null || heightValue <= maxH);
+        let weightMatch = (minW === null || weightValue >= minW) && (maxW === null || weightValue<= maxW);
+        
 
 
-        //checks weight
-        if (minW !== null) {
-            weightMatch = weightValue >= minW;
-        }
-        if (minW !== null) {
-            weightMatch = weightValue <= maxW;
-        }
+        // if (minH !== null) {
+        //     heightMatch = heightValue >= minH;
+        // }
+        // if (maxH !== null) {
+        //     heightMatch = heightValue <= maxH;
+        // }
+
+
+        // //checks weight
+        // if (minW !== null) {
+        //     weightMatch = weightValue >= minW;
+        // }
+        // if (maxW !== null) {
+        //     weightMatch = weightValue <= maxW;
+        // }
 
         // if both height and weight matches, this pokemon match the filter
         // if any of the params/filter isn't filled, it's not "considered", so default true

@@ -63,26 +63,43 @@
     const OrganizeContent = (object) => {
       let bigString = "";
       let pokeList = object.pokemon;
-      
-      if (pokeList.length == null){
+
+      if (pokeList.length == null) {
         let pokemon = pokeList;
-        let pokeImg = `<img src='${pokemon.img}' title= '${pokemon.name}'/> `
-        let line = `<div class='result'>${pokeImg}<div class='pokeNum'>#${pokemon.num}</div>
-        <div class='pokeName'>${pokemon.name}</div><div class='pokeType'>${pokemon.type}</div></div>`;
+        let line = PokeDataHelper(pokemon);
+
+
         bigString += line;
       }
-      
+
       for (let i = 0; i < pokeList.length; i++) {
         let pokemon = pokeList[i];
-        let pokeImg = `<img src='${pokemon.img}' title= '${pokemon.name}'/> `
-        let line = `<div class='result'>${pokeImg}<div class='pokeNum'>#${pokemon.num}</div>
-        <div class='pokeName'>${pokemon.name}</div><div class='pokeType'>${pokemon.type}</div></div>`;
+        let line = PokeDataHelper(pokemon);
 
         bigString += line;
       }
 
       return bigString;
     };
+
+    const PokeDataHelper = (pokemon) => {
+      let pokeImg = `<img src='${pokemon.img}' title= '${pokemon.name}'/> `
+      let line = `<div class='result'>${pokeImg}<div class='pokeNum'>#${pokemon.num}</div>
+        <div class='pokeName'>${pokemon.name}</div><div class='pokeType'>${pokemon.type}</div>`;
+      
+      let markFound = pokemon.mark_found;
+      if (markFound != null){
+        line += `<div class='additionalNotes'>Found: ${markFound}`;
+      }
+
+      let notes = pokemon.note;
+      if (markFound != null){
+        line += `<br>Notes: ${notes} </div>`;
+      }
+
+      line += '</div>';
+      return line;
+    }
 
 
     const requestUpdate = async (e,) => {
@@ -303,14 +320,14 @@
       <div class="form-tab">
         <h3>Filter by Height-Weight</h3>
         <form id="getByHW" action="/getByHeightWeight" method="get">
-          <label for="minHeight">MinHeight: </label>
+          <label for="minHeight">MinHeight (0.0 meters): </label>
           <input id="minHeightField" type="text" name="minHeight" />
-          <label for="maxHeight">MaxHeight: </label>
+          <label for="maxHeight">MaxHeight (0.0 meters): </label>
           <input id="maxHeightField" type="text" name="maxHeight" />
 
-          <label for="minWeight">MinWeight: </label>
+          <label for="minWeight">MinWeight (0.0 kg): </label>
           <input id="minWeightField" type="text" name="minWeight" />
-          <label for="maxWeight">MaxWeight: </label>
+          <label for="maxWeight">MaxWeight (0.0 kg): </label>
           <input id="maxWeightField" type="text" name="maxWeight" />
 
           <select class="methodSelect">
